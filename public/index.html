@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cheetu Portal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      background: linear-gradient(270deg, #ff4ec4, #3b6aff, #45ffbc, #faff3c);
+      background-size: 800% 800%;
+      animation: rgbFlow 12s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    @keyframes rgbFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #ffe28a;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 24px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #ff8dd2;
+      color: black;
+      transition: transform 0.3s, background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ffd8f0;
+      transform: scale(1.1);
+    }
+
+    #form-section {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #message {
+      margin-top: 10px;
+      color: #ffdede;
+    }
+
+    .show-pass {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 8px 0;
+      color: #ccc;
+    }
+
+    .show-pass input {
+      width: auto;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hello Vishakha, welcome to your portal</h1>
+    <h2>Create an account to get started or sign in if already done</h2>
+    <button onclick="toggleForm('create')">Create Account</button>
+    <button onclick="toggleForm('login')">Sign In</button>
+
+    <div id="form-section">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+
+      <div class="show-pass">
+        <input type="checkbox" id="showPassword" />
+        <label for="showPassword">Show Password</label>
+      </div>
+
+      <button onclick="submitForm()">Submit</button>
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <script>
+    let currentMode = ''; // 'create' or 'login'
+
+    function toggleForm(mode) {
+      currentMode = mode;
+      document.getElementById('form-section').style.display = 'block';
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('message').textContent = '';
+    }
+
+    function submitForm() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!username || !password) {
+        document.getElementById('message').textContent = 'Please fill all fields.';
+        return;
+      }
+
+      fetch(`/${currentMode === 'create' ? 'create-account' : 'login'}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (currentMode === 'create') {
+            document.getElementById('message').textContent = 'Account created 🎉';
+          } else {
+            window.location.href = '/cheetu-room.html';
+          }
+        } else {
+          document.getElementById('message').textContent = data.message || 'Error';
+        }
+      });
+    }
+
+    // Show/Hide password
+    document.getElementById('showPassword').addEventListener('change', function () {
+      const pwd = document.getElementById('password');
+      pwd.type = this.checked ? 'text' : 'password';
+    });
+
+    // Keyboard navigation: Enter to go down, Backspace to go up
+    document.addEventListener('keydown', function (e) {
+      const usernameField = document.getElementById('username');
+      const passwordField = document.getElementById('password');
+
+      if (document.activeElement === usernameField && e.key === 'Enter') {
+        passwordField.focus();
+      } else if (document.activeElement === passwordField && e.key === 'Enter') {
+        submitForm();
+      } else if (document.activeElement === passwordField && e.key === 'Backspace' && !passwordField.value) {
+        usernameField.focus();
+      }
+    });
+  </script>
+</body>
+</html>
