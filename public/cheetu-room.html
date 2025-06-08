@@ -5,42 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cheetu Room</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
     body {
       margin: 0;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      color: white;
-      background: linear-gradient(-45deg, #ffb6c1, #dda0dd, #ffb6c1, #dda0dd);
+      padding: 1rem;
+      background: linear-gradient(-45deg, #d88cff, #ffa3d8, #fcb5ff, #e3a1ff);
       background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      animation: rgbBG 15s ease infinite;
+      color: #fff;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes rgbBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
-    .title {
+    .header {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: bold;
-      margin-top: 30px;
-      text-shadow: 2px 2px 10px #fff;
-      animation: glow 2s infinite alternate;
+      text-shadow: 0 0 10px #fff, 0 0 20px pink, 0 0 30px purple;
+      margin-bottom: 2rem;
     }
 
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4; }
-      to { text-shadow: 0 0 20px #ff1493, 0 0 30px #ff1493; }
-    }
-
-    .title img {
-      width: 60px;
-      height: 60px;
-      margin-left: 15px;
-      animation: bounce 1.2s infinite;
+    .header img {
+      height: 2.5em;
+      margin-left: 1rem;
+      animation: bounce 2s infinite;
     }
 
     @keyframes bounce {
@@ -49,189 +47,260 @@
     }
 
     .accordion {
-      max-width: 600px;
-      margin: 30px auto;
+      margin-bottom: 1rem;
     }
 
-    .accordion-item {
-      background: rgba(255, 255, 255, 0.1);
+    .accordion button {
+      width: 100%;
+      padding: 1rem;
+      border: none;
       border-radius: 12px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
+      background: linear-gradient(to right, #cc66ff, #ff99cc);
+      color: #fff;
+      font-size: 1.1rem;
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
-    .accordion-header {
-      background-color: rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      padding: 15px 20px;
-      font-size: 1.2rem;
-      font-weight: bold;
+    .accordion button:hover {
+      transform: scale(1.03);
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.1);
+      margin-top: 0.5rem;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scaleY(0.95);}
+      to {opacity: 1; transform: scaleY(1);}
+    }
+
+    .joke-box {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 1rem;
     }
 
-    .accordion-content {
-      max-height: 0;
-      padding: 0 20px;
-      overflow: hidden;
-      transition: max-height 0.4s ease, padding 0.3s ease;
-    }
-
-    .accordion-item.active .accordion-content {
-      max-height: 300px;
-      padding: 15px 20px;
-    }
-
-    .joke {
-      display: none;
-    }
-
-    .joke.active {
-      display: block;
-    }
-
-    .joke-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 10px 16px;
+    .joke-box button {
+      padding: 0.5rem 1rem;
       border: none;
-      background-color: #fff;
-      color: #333;
       border-radius: 10px;
+      background: #ff99cc;
+      color: white;
       font-weight: bold;
       cursor: pointer;
+    }
+
+    .logout-btn {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: crimson;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       transition: all 0.3s ease;
     }
 
-    button:hover {
-      transform: scale(1.1);
-      background-color: #ffccf9;
+    .logout-btn:hover {
+      transform: scale(1.05);
+      background: #ff4d6d;
     }
 
-    #logout {
-      display: block;
-      margin: 30px auto;
-      background-color: crimson;
-      color: white;
-    }
-
-    #confirmBox {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #222;
-      padding: 30px;
-      border-radius: 15px;
+    .confirm-box {
       display: none;
-      color: white;
+      background: rgba(0,0,0,0.7);
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 12px;
+    }
+
+    .confirm-box button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .yes-btn { background: #28a745; color: white; }
+    .no-btn { background: #ffc107; color: black; }
+
+    .player {
+      margin-top: 2rem;
+      background: rgba(255,255,255,0.1);
+      padding: 1rem;
+      border-radius: 12px;
       text-align: center;
     }
 
-    #confirmBox button {
-      margin: 10px;
+    .player button {
+      margin: 0.3rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #cc66ff;
+      color: white;
+      font-weight: bold;
     }
 
+    .song-title {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      text-shadow: 0 0 5px #fff;
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        font-size: 1.5rem;
+      }
+
+      .header img {
+        height: 2em;
+      }
+
+      .panel {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="title">
-    Welcome, Vishakha
+  <div class="header">
+    Welcome to Cheetu Room
     <img src="teddy-sticker.png" alt="Teddy" />
   </div>
 
   <div class="accordion">
+    <button onclick="togglePanel(0)">Section 1</button>
+    <div class="panel">Dummy content for Section 1.</div>
 
-    <div class="accordion-item">
-      <div class="accordion-header">Click this when you're happy</div>
-      <div class="accordion-content">"Ooooh someone is grinning like they just got extra Manchurian balls in their takeaway 🍜😏
-Keep shining like a black rose at a beach rave, Vishakha! Go do a lil happy dance—and do not break the internet with that smile 😎✨"</div>
-    </div>
+    <button onclick="togglePanel(1)">Section 2</button>
+    <div class="panel">Dummy content for Section 2.</div>
 
-    <div class="accordion-item">
-      <div class="accordion-header">Click this when you're sad</div>
-      <div class="accordion-content">"Aww nooo, do not let the greys pull you under.
-Remember: even stormy skies make the beach look badass 🌊🖤
-Take a breath, eat some noodles, and pretend your sadness is just MSG withdrawal. You have got this, rosebud. 💪🌹"</div>
-    </div>
+    <button onclick="togglePanel(2)">Section 3</button>
+    <div class="panel">Dummy content for Section 3.</div>
 
-    <div class="accordion-item">
-      <div class="accordion-header">Click this when you have exams</div>
-      <div class="accordion-content">"Exams?! Time to go full ninja mode, Vishakha.
-Black hoodie, grey vibes, caffeine, and conquer-the-world energy ⚔️📚
-You are smarter than a fortune cookie—and twice as crunchy under pressure. Now slay, queen. 💥👑</div>
-    </div>
+    <button onclick="togglePanel(3)">Section 4</button>
+    <div class="panel">Dummy content for Section 4.</div>
 
-    <div class="accordion-item">
-      <div class="accordion-header">Click this when you are angry</div>
-      <div class="accordion-content">"Deep breath, stormy one.
-Picture a beach. Now put all your rage into a piñata shaped like what pissed you off. Smash it. Now eat Chinese food while listening to waves.
-You are a rose with thorns, but you also smell freaking divine 🌹🔥</div>
-    </div>
-
-    <div class="accordion-item">
-      <div class="accordion-header">Click this when you're bored</div>
-      <div class="accordion-content">
-        <div class="joke active">🤣 Joke 1: Why did teddy bring a ladder to school? Because it wanted to go to high school!</div>
-        <div class="joke">😆 Joke 2: What do you call a bear with no teeth? A gummy bear!</div>
-        <div class="joke">😂 Joke 3: Teddy tried to make a website… but it kept pawsing!</div>
-        <div class="joke-buttons">
-          <button onclick="showJoke(-1)">⬅ Prev</button>
-          <button onclick="showJoke(1)">Next ➡</button>
-        </div>
+    <button onclick="togglePanel(4)">Joke Section</button>
+    <div class="panel">
+      <div id="joke-content">This is joke #1.</div>
+      <div class="joke-box">
+        <button onclick="prevJoke()">Prev</button>
+        <button onclick="nextJoke()">Next</button>
       </div>
     </div>
 
-    <div class="accordion-item">
-      <div class="accordion-header">Click this if you wanna block me</div>
-      <div class="accordion-content">Why would you click this ? </div>
-    </div>
-
+    <button onclick="togglePanel(5)">Section 6</button>
+    <div class="panel">Dummy content for Section 6.</div>
   </div>
 
-  <button id="logout" onclick="openConfirm()">Logout</button>
+  <button class="logout-btn" onclick="confirmLogout()">Logout</button>
+  <div class="confirm-box" id="confirm-box">
+    <p>Sure you wanna logout?</p>
+    <button class="yes-btn" onclick="window.location.href='index.html'">Yes</button>
+    <button class="no-btn" onclick="document.getElementById('confirm-box').style.display='none'">No</button>
+  </div>
 
-  <div id="confirmBox">
-    <p>Are you sure you wanna logout ?</p>
-    <button onclick="location.href='index.html'">Yes</button>
-    <button onclick="closeConfirm()">No</button>
+  <div class="player">
+    <div class="song-title" id="song-title">Playing: Song 1</div>
+    <audio id="audio" src="songs/song1.mp3"></audio>
+    <button onclick="prevSong()">⏮️</button>
+    <button onclick="togglePlay()">⏯️</button>
+    <button onclick="nextSong()">⏭️</button>
+    <br />
+    <button onclick="changeVolume(-0.1)">🔉</button>
+    <button onclick="changeVolume(0.1)">🔊</button>
   </div>
 
   <script>
-    // Accordion logic
-    const headers = document.querySelectorAll('.accordion-header');
-    headers.forEach(header => {
-      header.addEventListener('click', () => {
-        const item = header.parentElement;
-        document.querySelectorAll('.accordion-item').forEach(i => {
-          if (i !== item) i.classList.remove('active');
-        });
-        item.classList.toggle('active');
-      });
-    });
+    const panels = document.querySelectorAll(".panel");
+    let openPanel = null;
 
-    // Joke navigation logic
-    let currentJoke = 0;
-    const jokes = document.querySelectorAll('.joke');
-    function showJoke(dir) {
-      jokes[currentJoke].classList.remove('active');
-      currentJoke = (currentJoke + dir + jokes.length) % jokes.length;
-      jokes[currentJoke].classList.add('active');
+    function togglePanel(i) {
+      if (openPanel === i) {
+        panels[i].style.display = "none";
+        openPanel = null;
+      } else {
+        panels.forEach(p => p.style.display = "none");
+        panels[i].style.display = "block";
+        openPanel = i;
+      }
     }
 
-    // Logout confirmation box
-    function openConfirm() {
-      document.getElementById('confirmBox').style.display = 'block';
+    const jokes = [
+      "This is joke #1.",
+      "This is joke #2.",
+      "This is joke #3."
+    ];
+    let jokeIndex = 0;
+
+    function nextJoke() {
+      jokeIndex = (jokeIndex + 1) % jokes.length;
+      document.getElementById("joke-content").innerText = jokes[jokeIndex];
     }
-    function closeConfirm() {
-      document.getElementById('confirmBox').style.display = 'none';
+
+    function prevJoke() {
+      jokeIndex = (jokeIndex - 1 + jokes.length) % jokes.length;
+      document.getElementById("joke-content").innerText = jokes[jokeIndex];
     }
+
+    function confirmLogout() {
+      document.getElementById("confirm-box").style.display = "block";
+    }
+
+    const songs = [
+      { name: "Song 1", src: "songs/song1.mp3" },
+      { name: "Song 2", src: "songs/song2.mp3" }
+    ];
+    let songIndex = 0;
+    const audio = document.getElementById("audio");
+    const songTitle = document.getElementById("song-title");
+
+    function loadSong() {
+      audio.src = songs[songIndex].src;
+      songTitle.textContent = `Playing: ${songs[songIndex].name}`;
+      audio.play();
+    }
+
+    function nextSong() {
+      songIndex = (songIndex + 1) % songs.length;
+      loadSong();
+    }
+
+    function prevSong() {
+      songIndex = (songIndex - 1 + songs.length) % songs.length;
+      loadSong();
+    }
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    function changeVolume(delta) {
+      audio.volume = Math.min(1, Math.max(0, audio.volume + delta));
+    }
+
+    // auto play on load
+    loadSong();
   </script>
 </body>
 </html>
