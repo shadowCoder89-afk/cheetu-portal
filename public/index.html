@@ -1,212 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Portal Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cheetu Portal Login</title>
   <style>
-    /* Background animation */
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(-45deg, #ff6ec4, #7873f5, #56e2cf, #ff9a8b);
+      background: linear-gradient(-45deg, #ff66cc, #9966ff, #66ccff, #ff9966);
       background-size: 400% 400%;
-      animation: gradient 10s ease infinite;
+      animation: gradientBG 10s ease infinite;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      flex-direction: column;
+      min-height: 100vh;
       color: white;
+      flex-direction: column;
+      padding: 20px;
     }
 
-    @keyframes gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
-    h1 {
-      font-size: 2.5rem;
-      text-shadow: 0 0 10px #fff, 0 0 20px #ff00cc;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .form-container {
+    .container {
       background: rgba(0, 0, 0, 0.4);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 30px;
       width: 90%;
       max-width: 400px;
       text-align: center;
+      box-shadow: 0 0 20px #fff;
     }
 
-    input[type="text"], input[type="password"] {
-      width: 90%;
+    h1 {
+      font-size: 26px;
+      text-shadow: 0 0 8px #fff, 0 0 12px #ff00ff;
+      margin-bottom: 20px;
+    }
+
+    .form-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      border: 2px solid #fff;
       padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: none;
-      outline: none;
+      border-radius: 10px;
     }
 
-    button {
-      margin: 8px;
-      padding: 10px 20px;
-      font-size: 1rem;
+    .form-toggle button {
+      background: transparent;
+      color: white;
+      padding: 10px;
+      border: 2px solid white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-toggle button.active {
+      background: white;
+      color: black;
+    }
+
+    .form-group {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .glow-btn {
+      background: #ffffff;
+      color: #000;
+      padding: 10px 15px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s ease;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 0 10px #fff, 0 0 20px #ff00ff;
+      transition: all 0.3s ease;
     }
 
-    .login-btn, .create-btn, .submit-btn {
-      background-color: #ff79c6;
-      color: white;
-    }
-
-    .login-btn:hover, .create-btn:hover, .submit-btn:hover {
-      background-color: #bd4b9c;
+    .glow-btn:hover {
       transform: scale(1.05);
+      box-shadow: 0 0 12px #fff, 0 0 24px #ff00ff;
     }
 
-    .active-mode {
-      box-shadow: 0 0 10px #fff, 0 0 20px #ff00cc;
-      transform: scale(1.05);
+    .message {
+      margin-top: 15px;
+      font-size: 14px;
+      color: yellow;
+      min-height: 20px;
     }
 
     .toggle-password {
-      background-color: #50fa7b;
-      color: #000;
-    }
-
-    .toggle-password:hover {
-      background-color: #3cc861;
-      transform: scale(1.05);
-    }
-
-    #floating-msg {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 24px;
-      background-color: #222;
-      color: white;
-      border-radius: 10px;
-      display: none;
-      z-index: 9999;
+      background: none;
+      border: none;
+      color: #00ffff;
+      cursor: pointer;
       font-weight: bold;
-      box-shadow: 0 0 10px rgba(255,255,255,0.4);
+      font-size: 14px;
     }
 
-    #authForm {
-      display: none;
-      margin-top: 20px;
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 22px;
+      }
+
+      .glow-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+
+      .form-toggle button {
+        font-size: 14px;
+        padding: 8px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Hello Vishakha,<br>welcome to your portal.</h1>
 
-  <h1>Hello Vishakha, welcome to your portal.</h1>
-
-  <div class="form-container">
-    <div>
-      <button id="createBtn" class="create-btn" onclick="toggleForm('create')">Create Account</button>
-      <button id="loginBtn" class="login-btn" onclick="toggleForm('login')">Login</button>
+    <div class="form-toggle">
+      <button id="showCreate">Create Account</button>
+      <button id="showLogin">Login</button>
     </div>
 
-    <form id="authForm" onsubmit="handleSubmit(event)">
-      <input type="text" id="username" placeholder="Username" required><br>
-      <input type="password" id="password" placeholder="Password" required><br>
-      <button type="button" class="toggle-password" onclick="togglePassword()">Show Password</button><br>
-      <button type="submit" class="submit-btn">Submit</button>
-    </form>
+    <div id="formSection" class="form-group">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button class="toggle-password" onclick="togglePassword()">Show Password</button>
+      <button class="glow-btn" id="submitBtn">Submit</button>
+    </div>
+
+    <div class="message" id="message"></div>
   </div>
 
-  <div id="floating-msg"></div>
-
   <script>
-    let currentMode = null;
+    const showCreateBtn = document.getElementById("showCreate");
+    const showLoginBtn = document.getElementById("showLogin");
+    const formSection = document.getElementById("formSection");
+    const submitBtn = document.getElementById("submitBtn");
+    const message = document.getElementById("message");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
 
-    function toggleForm(mode) {
-      currentMode = mode;
+    let formType = "";
 
-      // Reset form
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
+    const updateForm = (type) => {
+      formType = type;
+      formSection.style.display = "flex";
+      message.textContent = "";
+      usernameInput.value = "";
+      passwordInput.value = "";
+      showCreateBtn.classList.remove("active");
+      showLoginBtn.classList.remove("active");
 
-      // Show the form
-      document.getElementById('authForm').style.display = 'block';
-
-      // Highlight the active button
-      document.getElementById('createBtn').classList.remove('active-mode');
-      document.getElementById('loginBtn').classList.remove('active-mode');
-      if (mode === 'create') {
-        document.getElementById('createBtn').classList.add('active-mode');
+      if (type === "create") {
+        showCreateBtn.classList.add("active");
       } else {
-        document.getElementById('loginBtn').classList.add('active-mode');
+        showLoginBtn.classList.add("active");
       }
-    }
+    };
 
-    function togglePassword() {
-      const passwordInput = document.getElementById('password');
-      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
-    }
+    showCreateBtn.addEventListener("click", () => updateForm("create"));
+    showLoginBtn.addEventListener("click", () => updateForm("login"));
 
-    function showMessage(msg, bg = "#222") {
-      const msgBox = document.getElementById("floating-msg");
-      msgBox.innerText = msg;
-      msgBox.style.backgroundColor = bg;
-      msgBox.style.display = "block";
-      setTimeout(() => {
-        msgBox.style.display = "none";
-      }, 3000);
-    }
+    const togglePassword = () => {
+      passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+    };
 
-    function handleSubmit(e) {
-      e.preventDefault();
+    submitBtn.addEventListener("click", async () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
 
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        showMessage("Username and password are required!", "#c0392b");
+      if (!username || !password || !formType) {
+        message.textContent = "Please fill in all fields.";
         return;
       }
 
-      fetch(currentMode === 'create' ? '/create-account' : '/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          showMessage(data.message || "Success!", "#28a745");
-          setTimeout(() => {
-            window.location.href = '/cheetu-room.html';
-          }, 1000);
-        } else {
-          showMessage(data.message || "Error occurred!", "#c0392b");
-        }
-      })
-      .catch(() => {
-        showMessage("Network error. Try again later!", "#e74c3c");
-      });
-    }
+      const route = formType === "create" ? "/create-account" : "/login";
+      try {
+        const res = await fetch(route, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleSubmit(e);
-      } else if (e.key === 'Backspace') {
-        document.getElementById('username').focus();
+        if (res.ok) {
+          message.textContent = data.message || "Success!";
+          if (route === "/login") {
+            setTimeout(() => {
+              window.location.href = "/cheetu-room.html";
+            }, 1000);
+          }
+        } else {
+          message.textContent = data.message || "Something went wrong.";
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        message.textContent = "Server error.";
       }
+    });
+
+    // ENTER key navigation
+    [usernameInput, passwordInput].forEach((input, index, arr) => {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          if (index === arr.length - 1) {
+            submitBtn.click();
+          } else {
+            arr[index + 1].focus();
+          }
+        }
+      });
     });
   </script>
 </body>
