@@ -21,7 +21,7 @@ const pool = new Pool({
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(session({
   secret: 'cheetu_secret_key',
   resave: false,
@@ -30,7 +30,7 @@ app.use(session({
 
 // Serve index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 // Handle account creation
@@ -74,7 +74,7 @@ app.post('/login', async (req, res) => {
 // Serve cheetu-room.html (after login)
 app.get('/cheetu-room.html', (req, res) => {
   if (!req.session.user) return res.redirect('/');
-  res.sendFile(path.join(__dirname, 'cheetu-room.html'));
+  res.sendFile(path.join(__dirname, '../cheetu-room.html'));
 });
 
 // Logout
