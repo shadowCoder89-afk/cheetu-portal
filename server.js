@@ -1,79 +1,89 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
+const session = require('express-session');
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+const PORT = process.env.PORT || 3000;
 
-// Database setup
-const db = new sqlite3.Database('users.db');
+// PostgreSQL config
+const pool = new Pool({
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD ,
+  port:process.env.PGPORT 
+});
 
-// Create users table if it doesn't exist
-db.run(`CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT UNIQUE,
-  password TEXT
-)`);
-
-app.use(bodyParser.json());
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'cheetu_secret_key',
+  resave: false,
+  saveUninitialized: true
+}));
 
-// === Serve index.html ===
+// Serve index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// === Serve cheetu-room.html ===
-app.get('/cheetu-room', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'cheetu-room.html'));
-});
-
-// === Create Account Route ===
-app.post('/create-account', (req, res) => {
+// Handle account creation
+app.post('/create-account', async (req, res) => {
   const { username, password } = req.body;
-
-  // Check how many users exist
-  db.get('SELECT COUNT(*) AS count FROM users', (err, row) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: 'DB error.' });
+  try {
+    const existing = await pool.query('SELECT * FROM users');
+    if (existing.rows.length >= 2) {
+      return res.send('Account limit reached 💀');
     }
 
-    if (row.count >= 2) {
-      return res.status(403).json({ success: false, message: 'Only 2 users allowed.' });
-    }
-
-    // Try inserting user
-    db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], function(err) {
-      if (err) {
-        if (err.message.includes('UNIQUE')) {
-          return res.status(409).json({ success: false, message: 'Username already exists.' });
-        }
-        return res.status(500).json({ success: false, message: 'Insert failed.' });
-      }
-
-      res.json({ success: true, message: 'Account created successfully!' });
-    });
-  });
-});
-
-// === Login Route ===
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-
-  db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, row) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: 'DB error during login.' });
-    }
-
-    if (row) {
-      res.json({ success: true, message: 'Login successful.' });
+    await pool.query('INSERT INTO users (username, password) VALUES ($1, $2)', [username, password]);
+    res.send('Account created successfully 🎉');
+  } catch (err) {
+    if (err.code === '23505') {
+      res.send('Username already exists 🤷');
     } else {
-      res.status(401).json({ success: false, message: 'Wrong username or password.' });
+      console.error(err);
+      res.status(500).send('Server error 🧨');
     }
+  }
+});
+
+// Handle login
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
+    if (result.rows.length > 0) {
+      req.session.user = username;
+      res.redirect('/cheetu-room.html');
+    } else {
+      res.send('Invalid credentials 😑');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Login failed 😵');
+  }
+});
+
+// Serve cheetu-room.html (after login)
+app.get('/cheetu-room.html', (req, res) => {
+  if (!req.session.user) return res.redirect('/');
+  res.sendFile(path.join(__dirname, 'cheetu-room.html'));
+});
+
+// Logout
+app.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
   });
 });
 
-// === Start Server ===
-app.listen(port, () => {
-  console.log(`Cheetu Portal running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server up on http://localhost:${PORT}`);
 });
