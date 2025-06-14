@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const cors = require('cors');
+app.use(cors({origin: 'https://vercel.com/tanmays-projects-4d6de658/cheetu-portal/5sD5oiwMzffgr227qcdLkYkfb21V',credentials: true}))
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
